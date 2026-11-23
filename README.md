@@ -188,11 +188,12 @@ copy it from there. It asks seven things once:
 | (g) links open in this app | no |
 
 On Basic, the step `set_mcp` is refused `plan_required`: an app's own MCP
-server comes with Plus. Today needs none, because step 7 uses the central
-endpoint. The prompt stops at a refusal and asks; answer:
+server comes with Plus. Today needs none: the agent drives the turtle in
+block 2, step 7 below, over the central endpoint. The prompt stops at a
+refusal and asks; answer:
 
 ```text
-Skip set_mcp: the app's MCP server needs Plus, and today does not need it. Continue with step 4.
+Skip set_mcp: the app's MCP server needs Plus, and today does not need it. Finish the rest of your step 3, then continue with your step 4.
 ```
 
 It reports a line for `.env` and an invitation link. Keep the link.
