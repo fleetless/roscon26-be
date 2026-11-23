@@ -4,8 +4,8 @@ The handout of the workshop on 2026-11-25. In two blocks of 45 minutes, a
 simulated turtle goes from `docker run` to a control page of your own, on
 [Fleetless](https://fleetless.dev), and an agent does most of the typing.
 Every command and every prompt below sits in its own block with a copy
-button. Nothing here needs typing; the token is the one exception, and that
-one you paste.
+button. Nothing here needs typing but your own addresses; the token you
+paste.
 
 | Block | What happens | Ends with |
 |---|---|---|
@@ -22,15 +22,26 @@ one you paste.
 - **A Fleetless account** at <https://console.fleetless.dev>. The free plan,
   Basic, holds one robot and one app, which is what today needs.
 
-Conference Wi-Fi is shared by everyone in the room. Two downloads go better
-before you arrive:
+Conference Wi-Fi is shared by everyone in the room. The downloads go better
+before you arrive. The turtle:
 
 ```sh
 docker pull ghcr.io/fleetless/turtle-sim
 ```
 
+The app-starter and its dependencies, about 1,100 packages: clone it, start
+it once, and press Ctrl-C when the log prints `Local:`.
+
 ```sh
-docker pull node:22.23.5-bookworm-slim
+git clone https://github.com/fleetless/app-starter.git
+```
+
+```sh
+cd app-starter
+```
+
+```sh
+docker compose up
 ```
 
 ## 🔌 Connect your agent
@@ -46,11 +57,12 @@ account:
 https://mcp.fleetless.dev
 ```
 
-**Claude Code.** A connector added in Claude Desktop or on claude.ai is
-already there under the same account: `/mcp` lists it. Without one:
+**Claude Code.** Signed in with the same claude.ai account, a connector
+added in Claude Desktop or on claude.ai is already there: `/mcp` lists it.
+Without one, for every folder at once:
 
 ```sh
-claude mcp add --transport http fleetless https://mcp.fleetless.dev
+claude mcp add --transport http --scope user fleetless https://mcp.fleetless.dev
 ```
 
 Then `/mcp` inside Claude Code, and sign in.
@@ -147,7 +159,8 @@ Then, on **Controls**:
 
 From here on, Claude Code in a terminal.
 
-**1. Clone the app-starter**, a template app on `@fleetless/sdk`:
+**1. Clone the app-starter**, a template app on `@fleetless/sdk`, unless you
+did before you came:
 
 ```sh
 git clone https://github.com/fleetless/app-starter.git
@@ -173,6 +186,14 @@ copy it from there. It asks seven things once:
 | (e) first app user | your own address |
 | (f) mail or link | the link |
 | (g) links open in this app | no |
+
+On Basic, the step `set_mcp` is refused `plan_required`: an app's own MCP
+server comes with Plus. Today needs none, because step 7 uses the central
+endpoint. The prompt stops at a refusal and asks; answer:
+
+```text
+Skip set_mcp: the app's MCP server needs Plus, and today does not need it. Continue with step 4.
+```
 
 It reports a line for `.env` and an invitation link. Keep the link.
 
@@ -205,7 +226,7 @@ The tab holds four parts:
 3. Joystick. While it is held, publish drive with linear_speed (-0.5 to 0.5) and angular_speed (-2.0 to 2.0) every 100 ms. On release, stop publishing: the bridge stops the turtle 500 ms after the last message.
 4. Stop. Stop publishing, then cancel whatever job runs on drive_to_square, drive_to and dock. A refusal because nothing runs there is fine.
 
-Show each part only when the datasheet lists what it needs: joystick and stop the publisher drive, the map the datapoints cell_x, cell_y and heading, the camera the camera top. Keep every existing tab. When done, run docker compose exec app pnpm lint and docker compose exec app pnpm typecheck, and fix what they report.
+Show each part only when the datasheet lists what it needs: joystick and stop the publisher drive, the map the datapoints cell_x, cell_y and heading, the camera the camera top. Keep every existing tab. Add no dependency: this machine has no Node, and every pnpm command runs as docker compose exec app pnpm. When done, run docker compose exec app pnpm lint and docker compose exec app pnpm typecheck, and fix what they report.
 ```
 
 The page reloads as the agent writes. Drive the turtle from it. Hold the
@@ -237,8 +258,8 @@ Take the turtle as close to a pond as it gets, then back onto its charging pad. 
 ```
 
 It reads the descriptions, gets `target_occupied` for a square of water,
-picks a neighbour, and ends with `dock`. Nothing in this room ran a server, a
-database or a sign-in. That was the point.
+picks a neighbour, and ends with `dock`. Nobody in this room wrote a server,
+a database or a sign-in. That was the point.
 
 ## 🧹 Afterwards
 
@@ -260,12 +281,24 @@ delete them in the console.
 | You see | Because | Then |
 |---|---|---|
 | The turtle never turns online | The token is wrong or missing | `turtle.env`: one line, no quotes, no spaces |
-| `unknown_type` warnings on publish | The cloud has not fetched the turtle's message types | Nothing; or ask the agent to fetch them (`console_introspection_write`, action `fetch_types`) and publish again |
-| Every call of the app fails as a network error | The app's origin is not in its `allowed_origins` | Ask the agent to add `http://localhost:3000` |
-| The app answers `not_found` | `NUXT_PUBLIC_APP_IDENTIFIER` is not the app's identifier | Fix `.env`, then `docker compose up` again |
-| Port 3000 is taken | Something else runs there | `PORT=3100` in `.env`, and `http://localhost:3100` into `allowed_origins` |
+| `unknown_type` warnings on publish | The cloud has not fetched the turtle's message types | Nothing; or the first prompt below |
+| Every call of the app fails as a network error | The app's origin is not in its `allowed_origins` | The second prompt below |
+| The app says "That does not exist, or you cannot reach it." | `NUXT_PUBLIC_APP_IDENTIFIER` is not the app's identifier | Fix `.env`, then `docker compose up` again |
+| Port 3000 is taken | Something else runs there | `PORT=3100` in `.env`, and the second prompt below with `http://localhost:3100` |
 | An edit does not reach the browser (Windows) | Docker Desktop passes no file events from a Windows drive | `CHOKIDAR_USEPOLLING=true` in `.env`, then `docker compose up` again |
-| Your console password does not sign you in to the app | App users and console users are separate accounts | Use the password you set on the invitation |
+| Your console sign-in does not sign you in to the app | App users and Fleetless users are separate accounts | Sign in with the password you set on the invitation |
+
+Fetch the message types:
+
+```text
+Fetch the message types of the robot turtle with console_introspection_write, action fetch_types, then publish its configuration again.
+```
+
+Allow the app's origin:
+
+```text
+Add http://localhost:3000 to the allowed_origins of the app turtle_control, keeping everything else in its registration slice as it is.
+```
 
 ## 📄 License
 
