@@ -174,7 +174,7 @@ because Fleetless hasn't loaded the turtle's message types yet. It's only a
 warning and you can publish anyway. A few seconds later **Data** and
 **Controls** fill up.
 
-**9. Let the agent drive.** Back to your agent. It only knows the six
+**9. Let the agent drive.** Back to your agent. It can only use the six
 entries it wrote, so the prompt tells it where the pond is. It also tells
 the agent that you've already published its draft, so it doesn't try to
 do that itself.
@@ -189,8 +189,10 @@ pad. After each step, tell me where the turtle is.
 
 Watch it in the view at <http://localhost:8765>. M5 is all water, so
 `drive_to_square` answers `target_occupied`, and the agent has to pick a
-square next to it on its own. At the end it sends the turtle home with
-`dock`.
+square next to it on its own. Some of those are water too, so two or three
+refusals before it gets there are normal. At the end it sends the turtle
+home with `dock`. The six entries and their descriptions are all it has to
+go on.
 
 ### ✔️ Checkpoint 1
 
