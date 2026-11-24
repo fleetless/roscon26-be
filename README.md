@@ -129,10 +129,10 @@ docker exec -it turtle ros2 topic list
 
 ```text
 Use the Fleetless tools, and call docs with action describe before
-you first use an action. Find my robot named turtle and read what its
-bridge reported about its ROS graph (console_introspection_read,
-action get). List its topics, services and actions with their types
-in one table. Change nothing.
+you first use an action. Find my robot named turtle and ask its
+bridge for its current ROS graph (console_introspection_write,
+action refresh). List its topics, services and actions with their
+types in one table. Change nothing else.
 ```
 
 **7. Let the agent write a first configuration.** The ROS graph tells the
