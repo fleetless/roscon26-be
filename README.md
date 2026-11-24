@@ -12,7 +12,7 @@ token and your email address.
 
 | Block | What you do | Where you end up |
 |---|---|---|
-| 1 | Sign up, connect your agent, add the turtle, and let the agent write its first configuration | You drive the turtle from the console, then the agent drives it |
+| 1 | Sign up, connect your agent, add the turtle, let the agent write its first configuration and drive with it | The turtle runs on its complete configuration, and you drive it from the console |
 | 2 | Clone the app template, let the agent register the app, then build the app you want together with it | An app of your own that drives the turtle |
 
 ## ✅ Before you start
@@ -142,7 +142,7 @@ someone who knows the robot can fill in.
 
 ```text
 Write a draft fleetless.yaml for the robot turtle with exactly these
-five entries, built from the ROS graph you just read. Call docs with
+six entries, built from the ROS graph you just read. Call docs with
 action describe for console_config_write before you use it.
 
 - datapoint battery_soc: the battery's charge from /battery_state,
@@ -157,6 +157,8 @@ action describe for console_config_write before you use it.
   10 fps.
 - action drive_to_square: /turtle/drive_to_square, whose goal is a
   square from A1 to P16.
+- action dock: /turtle/dock, which drives the turtle onto its
+  charging pad in square A1.
 
 Give every entry a description a model can act on. Save it with
 console_config_write, action draft_put, and do not publish. Then show
@@ -171,6 +173,24 @@ the dialog. The dialog shows an `unknown_type` warning for each entry,
 because Fleetless hasn't loaded the turtle's message types yet. It's only a
 warning and you can publish anyway. A few seconds later **Data** and
 **Controls** fill up.
+
+**9. Let the agent drive.** Back to your agent. It only knows the six
+entries it wrote, so the prompt tells it where the pond is. It also tells
+the agent that you've already published its draft, so it doesn't try to
+do that itself.
+
+```text
+I reviewed your draft and published it in the console, so its six
+entries are live on the turtle now. Do not change the configuration.
+Call robots.describe for the robot turtle, then take the turtle as
+close to the pond in square M5 as it gets, and back onto its charging
+pad. After each step, tell me where the turtle is.
+```
+
+Watch it in the view at <http://localhost:8765>. M5 is all water, so
+`drive_to_square` answers `target_occupied`, and the agent has to pick a
+square next to it on its own. At the end it sends the turtle home with
+`dock`.
 
 ### ✔️ Checkpoint 1
 
@@ -196,23 +216,6 @@ Then try things out on **Controls**:
   <http://localhost:8765> runs on your laptop, so you can watch the turtle
   keep driving to its pad. Switch the Wi-Fi back on, and the result,
   `docked`, shows up in the console.
-
-### 🤖 Let the agent drive
-
-Back to your agent from step 2. It now sees the whole configuration,
-descriptions included, and can drive the turtle itself:
-
-```text
-Take the turtle as close to a pond as it gets, then back onto its
-charging pad. Call robots.describe for the robot turtle first and
-read the descriptions. After each step, tell me where the turtle is.
-```
-
-Watch it in the view at <http://localhost:8765>. The agent reads the
-descriptions and plans its own route. If it picks a square in the water, it
-gets `target_occupied` and tries the one next to it. At the end it sends the
-turtle home with `dock`. Nobody told it how: the descriptions in the
-configuration are all it has.
 
 ## 2️⃣ Block 2: Build your own app
 
