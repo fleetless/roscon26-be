@@ -1,10 +1,11 @@
 # The turtle simulator for the workshop, with the Fleetless bridge built in.
 # Replace frt_... below with your robot token, then run this in this folder:
 #
-#   docker compose up
+#   docker compose up -d
 #
-# The view is at http://localhost:8765. Ctrl-C stops the turtle, and
-# `docker compose down -v` removes the container and its volume.
+# The view is at http://localhost:8765, and `docker compose logs -f turtle`
+# shows what the turtle is doing. `docker compose down -v` removes the
+# container and its volume.
 #
 # Keep the token in this file on your machine. Don't paste it into a chat,
 # commit it or show it in a screenshot. All other settings of the image are
