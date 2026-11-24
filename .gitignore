@@ -1,3 +1,4 @@
-# The robot token never goes into a commit.
-turtle.env
+# The app-starter, cloned in block 2. It is a repository of its own.
+turtle-app/
+# Secrets never go into a commit.
 .env

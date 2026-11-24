@@ -1,0 +1,27 @@
+# The turtle for the workshop: the simulator with the Fleetless bridge inside.
+# Put your robot's token in place of frt_... below, then, in this folder:
+#
+#   docker compose up
+#
+# The view is at http://localhost:8765. Ctrl-C stops the turtle;
+# `docker compose down -v` removes it and its volume.
+#
+# The token is yours alone: it stays in this file on your machine, never in a
+# chat, a commit or a screenshot. Every other setting the image reads is in
+# https://github.com/fleetless/turtle-sim#readme
+services:
+  turtle:
+    image: ghcr.io/fleetless/turtle-sim:latest
+    container_name: turtle
+    environment:
+      # The token the console showed once, when you created the robot.
+      FLEETLESS_TOKEN: frt_...
+    ports:
+      # The view, for this machine only.
+      - "127.0.0.1:8765:8765"
+    volumes:
+      # What outlives the container: which goal belongs to which job.
+      - turtle-state:/state
+
+volumes:
+  turtle-state:
