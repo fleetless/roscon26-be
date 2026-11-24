@@ -12,7 +12,7 @@ token and your email address.
 
 | Block | What you do | Where you end up |
 |---|---|---|
-| 1 | Sign up, connect your agent, add the turtle, let the agent write its first configuration and drive with it | The turtle runs on its complete configuration, and you drive it from the console |
+| 1 | Sign up, connect your agent, add the turtle, let the agent write its first configuration, try it in the console, then let the agent drive | The turtle runs on its complete configuration, ready for block 2 |
 | 2 | Clone the app template, let the agent register the app, then build the app you want together with it | An app of your own that drives the turtle |
 
 ## ✅ Before you start
@@ -174,6 +174,20 @@ because Fleetless hasn't loaded the turtle's message types yet. It's only a
 warning and you can publish anyway. A few seconds later **Data** and
 **Controls** fill up.
 
+Now try things out on **Controls**:
+
+- **Send** on `drive` with `linear_speed` set to `0.5`. The turtle moves for
+  half a second, about a quarter of a metre, and stops by itself.
+- **Run** on `drive_to_square` with `H9`. This starts a job, which ends with
+  `succeeded` and the reason `reached`.
+- Try `M5` and `N13` as well. `M5` is in the pond, so you get
+  `target_occupied`. `N13` is a courtyard without a door, so you get
+  `unreachable`.
+- **Run** on `dock`, then switch off your Wi-Fi. The view at
+  <http://localhost:8765> runs on your laptop, so you can watch the turtle
+  keep driving to its pad. Switch the Wi-Fi back on, and the result,
+  `docked`, shows up in the console.
+
 **9. Let the agent drive.** Back to your agent. It can only use the six
 entries it wrote, so the prompt tells it where the pond is. It also tells
 the agent that you've already published its draft, so it doesn't try to
@@ -204,20 +218,6 @@ Open <http://localhost:8765/fleetless.yaml>. Your browser saves it as
 `turtle.fleetless.yaml`. In the console, on **Configuration**, click
 **Upload fleetless.yaml** (the arrow pointing up), pick the file, then
 **Save draft**, **Publish** and **Publish**.
-
-Then try things out on **Controls**:
-
-- **Send** on `drive` with `linear_speed` set to `0.5`. The turtle moves for
-  half a second, about a quarter of a metre, and stops by itself.
-- **Run** on `drive_to_square` with `H9`. This starts a job, which ends with
-  `succeeded` and the reason `reached`.
-- Try `M5` and `N13` as well. `M5` is in the pond, so you get
-  `target_occupied`. `N13` is a courtyard without a door, so you get
-  `unreachable`.
-- **Run** on `dock`, then switch off your Wi-Fi. The view at
-  <http://localhost:8765> runs on your laptop, so you can watch the turtle
-  keep driving to its pad. Switch the Wi-Fi back on, and the result,
-  `docked`, shows up in the console.
 
 ## 2️⃣ Block 2: Build your own app
 
