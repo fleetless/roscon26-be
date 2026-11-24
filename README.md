@@ -7,8 +7,8 @@ typing for you.
 
 You don't need to copy anything from the projector. Every command and every
 prompt is in its own box below, and the copy button in the corner of each box
-takes the whole thing. The only things you type yourself are your robot token
-and your email address.
+takes the whole thing. The only things you fill in yourself are your robot
+token and your email address.
 
 | Block | What you do | Where you end up |
 |---|---|---|
@@ -207,7 +207,7 @@ Read AGENT-SETUP.md and carry out the prompt under "The prompt" with the Fleetle
 
 When the agent is done, it gives you an invitation link. Keep it for step 4.
 
-**4. Start the app.** Open a second terminal in `turtle-app` and run:
+**4. Start the app.** Open another terminal in `turtle-app` and run:
 
 ```sh
 docker compose up -d
@@ -265,8 +265,9 @@ you delete them in the console.
 | The turtle doesn't come online and the log shows `invalid_token` | The token is wrong or missing | Check `FLEETLESS_TOKEN:` in `turtle-sim/compose.yaml`: a space after the colon, then the token, no quotes. Press Ctrl-C and run `docker compose up` again |
 | `unknown_type` warnings when publishing | Fleetless hasn't loaded the turtle's message types yet | You can ignore them, or use the first prompt below |
 | Every request from the app fails with a network error | The app's address is missing from its `allowed_origins` | Use the second prompt below |
-| The app says "That does not exist, or you cannot reach it." | `NUXT_PUBLIC_APP_IDENTIFIER` in `.env` doesn't match the app | Fix `.env`, then run `docker compose up -d` again |
-| Port 3000 is already in use | Another program uses it | Add `PORT=3100` to `.env` and use the second prompt below with `http://localhost:3100` |
+| The app says "That does not exist, or you cannot reach it." | `NUXT_PUBLIC_APP_IDENTIFIER` in `.env` doesn't match the app | Fix `.env`, then run `docker compose restart app` |
+| Port 3000 is already in use | Another program uses it | Add `PORT=3100` to `.env`, run `docker compose up -d` again, and use the second prompt below with `http://localhost:3100` |
+| `docker compose up` says the container name `turtle` is already in use | An old turtle container is still there | Remove it with `docker rm -f turtle`, then start again |
 | Changes don't show up in the browser (Windows) | Docker Desktop doesn't pass file changes from a Windows drive | Add `CHOKIDAR_USEPOLLING=true` to `.env`, then run `docker compose up -d` again |
 | Your console login doesn't work in the app | App accounts and Fleetless accounts are separate | Sign in with the password you set when you accepted the invitation |
 
