@@ -12,7 +12,7 @@ token and your email address.
 
 | Block | What you do | Where you end up |
 |---|---|---|
-| 1 | Sign up, connect your agent, add the turtle, let the agent write its first configuration, try it in the console, then let the agent drive | The turtle runs on its complete configuration, ready for block 2 |
+| 1 | Sign up, connect your agent, add the turtle, let the agent write a first configuration, try it in the console, hand the agent the wheel | You've driven the turtle by hand and by agent, and it runs on its complete configuration |
 | 2 | Clone the app template, let the agent register the app, then build the app you want together with it | An app of your own that drives the turtle |
 
 ## ✅ Before you start
@@ -176,13 +176,15 @@ warning and you can publish anyway. A few seconds later **Data** and
 
 Now try things out on **Controls**:
 
-- **Send** on `drive` with `linear_speed` set to `0.5`. The turtle moves for
-  half a second, about a quarter of a metre, and stops by itself.
+- **Send** on `drive` with `linear_speed` set to `0.5`. The turtle rolls
+  about a quarter of a metre and stops by itself.
 - **Run** on `drive_to_square` with `H9`. This starts a job, which ends with
   `succeeded` and the reason `reached`.
-- Try `M5` and `N13` as well. `M5` is in the pond, so you get
-  `target_occupied`. `N13` is a courtyard without a door, so you get
-  `unreachable`.
+- Try `M5` and `N13` as well. Both jobs end `failed`: `M5` is in the
+  pond, and `N13` is a courtyard without a door. The console only says
+  the action ended with status 6, which is ROS for aborted. The reason,
+  `target_occupied` or `unreachable`, is in the result, and in step 9
+  the agent reads it.
 - **Run** on `dock`, then switch off your Wi-Fi. The view at
   <http://localhost:8765> runs on your laptop, so you can watch the turtle
   keep driving to its pad. Switch the Wi-Fi back on, and the result,
