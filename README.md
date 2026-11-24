@@ -248,10 +248,9 @@ template as context, including the README and `AGENT-SETUP.md`.
 That's where the invitation for your app account goes.
 
 Fleetless only lets people into an app once it links a legal notice and a
-privacy policy, and it checks that both pages load. For a test app that
-only you use, the prompt points both at this repository. If you have a
-legal notice and a privacy policy of your own, put their addresses in
-place of the two GitHub links.
+privacy policy, and it checks that both pages load. The agent can't set
+these two links yet, so it stops once and asks you to add them in the
+console.
 
 ```text
 Read AGENT-SETUP.md and carry out the prompt under "The prompt" with
@@ -265,16 +264,27 @@ the Fleetless MCP tools. Its step 1 is answered:
 (g) no.
 If set_mcp is refused plan_required, skip it, since the app's MCP
 server needs Plus and today does not need it, and carry on with the
-next step. Before you invite anyone (its step 6), set the app's legal
-links with console_apps_write, action set_urls:
-operator_info_url https://github.com/fleetless/roscon26-be
-privacy_policy_url https://github.com/fleetless/roscon26-be
-and every other URL null.
+next step. Do not call set_urls. Before you invite anyone (its step
+6), stop and ask me to add the app's legal links in the console, and
+carry on once I tell you they are saved.
 When it is done, copy .env.example to .env and set
 NUXT_PUBLIC_API_URL=https://api.fleetless.dev and
 NUXT_PUBLIC_APP_IDENTIFIER=turtle_control there, changing nothing
 else.
 ```
+
+When the agent stops and asks for the legal links, go to the console and
+open **Apps** → **Turtle Control** → **Sign-in**. Under **Links and pages**,
+put this address into both **Legal notice** and **Privacy policy**, then
+click **Save**:
+
+```text
+https://github.com/fleetless/roscon26-be
+```
+
+For a test app that only you use, that's enough. If you have a legal notice
+and a privacy policy of your own, use those instead. Then tell the agent
+that the links are saved.
 
 When the agent is done, it gives you an invitation link. Keep it for step 4.
 
