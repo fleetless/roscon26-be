@@ -7,8 +7,8 @@ typing for you.
 
 You don't need to copy anything from the projector. Every command and every
 prompt is in its own box below, and the copy button in the corner of each box
-takes the whole thing. The only things you fill in yourself are your robot
-token and your email address.
+takes the whole thing. The only things you type yourself are your robot
+token and, when the agent asks for it, your email address.
 
 | Block | What you do | Where you end up |
 |---|---|---|
@@ -243,40 +243,43 @@ cd turtle-app
 **2. Start your agent in the `turtle-app` folder.** That way it has the whole
 template as context, including the README and `AGENT-SETUP.md`.
 
-**3. Let the agent register the app with Fleetless.** Replace
-`you@example.com` with your own email address before you send the prompt.
-That's where the invitation for your app account goes.
+**3. Let the agent register the app with Fleetless.** The agent asks you
+for your email address. That's where the invitation for your app account
+goes.
 
 Fleetless only lets people into an app once it links a legal notice and a
 privacy policy, and it checks that both pages load. The agent can't set
-these two links yet, so it stops once and asks you to add them in the
-console.
+these two links yet, so before the invitation it stops one time and tells
+you where to add them in the console.
 
 ```text
 Read AGENT-SETUP.md and carry out the prompt under "The prompt" with
-the Fleetless MCP tools. Its step 1 is answered:
+the Fleetless MCP tools. Its step 1 is answered, except (e):
 (a) Turtle Control
 (b) turtle_control
 (c) http://localhost:3000
 (d) the robot turtle
-(e) you@example.com
+(e) ask me for my email address
 (f) hand me the link
 (g) no.
 If set_mcp is refused plan_required, skip it, since the app's MCP
 server needs Plus and today does not need it, and carry on with the
 next step. Do not call set_urls. Before you invite anyone (its step
-6), stop and ask me to add the app's legal links in the console, and
-carry on once I tell you they are saved.
+6), stop and ask me to add the app's legal links in the console:
+Apps, Turtle Control, Sign-in, Links and pages, then Legal notice and
+Privacy policy, then Save. Suggest
+https://github.com/fleetless/roscon26-be for both. Carry on once I
+tell you they are saved.
 When it is done, copy .env.example to .env and set
 NUXT_PUBLIC_API_URL=https://api.fleetless.dev and
 NUXT_PUBLIC_APP_IDENTIFIER=turtle_control there, changing nothing
 else.
 ```
 
-When the agent stops and asks for the legal links, go to the console and
-open **Apps** → **Turtle Control** → **Sign-in**. Under **Links and pages**,
-put this address into both **Legal notice** and **Privacy policy**, then
-click **Save**:
+When the agent stops for the legal links, go to the console and open
+**Apps** → **Turtle Control** → **Sign-in**. Under **Links and pages**, put
+the address the agent suggests into both **Legal notice** and
+**Privacy policy**, then click **Save**. It's this repository:
 
 ```text
 https://github.com/fleetless/roscon26-be
