@@ -1,86 +1,101 @@
 # 🐢 From a ROS 2 robot to an app
 
-The handout of the workshop on 2026-11-25. In two blocks of 45 minutes, a
-simulated turtle goes from `docker compose up` to a control page of your own,
-on [Fleetless](https://fleetless.dev), and an agent does most of the typing.
-Every command and every prompt below sits in its own block with a copy
-button. Nothing here needs typing but your token and your address.
+This is the handout for the workshop on 25 November 2026. Over two blocks of
+45 minutes you connect a simulated turtle to [Fleetless](https://fleetless.dev)
+and build your own app to control it. A coding agent does most of the
+typing for you.
 
-| Block | What happens | Ends with |
+You don't need to copy anything from the projector. Every command and every
+prompt is in its own box below, and the copy button in the corner of each box
+takes the whole thing. The only things you type yourself are your robot token
+and your email address.
+
+| Block | What you do | Where you end up |
 |---|---|---|
-| 1 | Open an account, connect your agent, create a robot, start the turtle, let the agent write five entries of its configuration, look, publish | **Checkpoint 1**: the turtle drives from the console |
-| 2 | Clone the app-starter, let the agent register the app, start it, let the agent build a control page, then hand it the turtle | Your page drives the turtle, and so does your agent |
+| 1 | Sign up, connect your agent, add the turtle, and let the agent write its first configuration | You drive the turtle from the Fleetless console |
+| 2 | Clone the app template, let the agent register and build the app, then let the agent drive | Your own app drives the turtle |
 
 ## ✅ Before you start
 
-- **Docker**: Docker Desktop on macOS or Windows, Docker Engine with Compose
-  v2 on Linux. amd64 or arm64. No ROS, no Node, no GPU.
-- **Git.**
-- **An agent that speaks MCP.** The projector shows Claude Desktop in block 1
-  and Claude Code in block 2. Codex, Cursor and the rest take the same URL.
+You need:
 
-Conference Wi-Fi is shared by everyone in the room, so two downloads go better
-before you arrive. This repository:
+- **Docker.** Docker Desktop on macOS or Windows, or Docker Engine with
+  Compose v2 on Linux. Both amd64 and arm64 work. You don't need ROS, Node or
+  a GPU.
+- **Git.**
+- **A coding agent that supports MCP**, for example Claude Desktop, Claude
+  Code, Codex or Cursor. On the projector you'll see Claude Desktop in block 1
+  and Claude Code in block 2.
+
+The conference Wi-Fi is shared by everyone, so please download two things
+before you arrive. First this repository:
 
 ```sh
 git clone https://github.com/fleetless/roscon26-be.git
 ```
 
-And the turtle, about 700 MB:
+Then the turtle simulator image (about 700 MB):
 
 ```sh
 docker pull ghcr.io/fleetless/turtle-sim
 ```
 
-## 1️⃣ Block 1: a robot that exposes nothing, then five things
+## 1️⃣ Block 1: Connect the turtle
 
-**1. Open an account** at <https://console.fleetless.dev>. Sign-up is open,
-and the free plan, Basic, holds one robot and one app: what today needs.
+**1. Create a Fleetless account** at <https://console.fleetless.dev>. Sign-up
+is open to everyone. The free Basic plan includes one robot and one app,
+which is all you need today.
 
-**2. Connect your agent.** Fleetless's endpoint for your team is
-`https://mcp.fleetless.dev`. Your agent signs in as you and reaches what your
-account reaches.
+**2. Connect your agent to Fleetless.** Your agent talks to Fleetless through
+the MCP server at `https://mcp.fleetless.dev`. It signs in with your account
+and can see and change everything your account can.
 
-- **Claude Desktop.** Settings → Connectors → Add custom connector. Name it
-  `Fleetless`, give it this URL, connect, and sign in with your Fleetless
-  account:
+- **Claude Desktop:** go to Settings → Connectors → Add custom connector,
+  name it `Fleetless`, paste the URL below, click connect and sign in with
+  your Fleetless account.
 
   ```text
   https://mcp.fleetless.dev
   ```
 
-- **Claude Code.** Signed in with the same claude.ai account, a connector
-  added in Claude Desktop or on claude.ai is already there: `/mcp` lists it.
-  Without one, for every folder at once:
+- **Claude Code:** if you're signed in with the same claude.ai account and
+  already added the connector in Claude Desktop or on claude.ai, it's there
+  already. Type `/mcp` to check. Otherwise add it for all folders with:
 
   ```sh
   claude mcp add --transport http --scope user fleetless https://mcp.fleetless.dev
   ```
 
-  Then `/mcp` inside Claude Code, and sign in.
+  Then type `/mcp` in Claude Code and sign in.
 
-- **Anything else.** Add the URL as a remote MCP server. Discovery and sign-in
-  follow on their own.
+- **Other agents:** add the URL as a remote MCP server. The agent should find
+  the sign-in by itself.
 
-The agent can move the robot. Today that is a turtle in a container. On a
-real robot, a person watches every motion and can stop it at once.
+Keep in mind that the agent can move the robot. Today it's only a turtle in a
+container. With a real robot, someone should always be watching and ready to
+stop it.
 
-**3. Create the robot.** In the console: **Robots** → **Connect robot**. Name
-it `turtle`, then **Create robot**. The token, `frt_…`, is shown once: copy
-it. Skip the install commands, the bridge is in the image. Tick **I saved the
-token**, then **Next**; the dialog waits for the turtle. The token goes by
-hand, not by agent: it has no business in a chat history.
+**3. Add the robot in the console.** Go to **Robots** → **Connect robot**,
+name it `turtle` and click **Create robot**. The console now shows a token
+starting with `frt_`. Copy it, because it is only shown once. You can skip
+the install commands, since the bridge is already part of the turtle image.
+Tick **I saved the token** and click **Next**. The dialog then waits for the
+turtle to connect.
 
-**4. Start the turtle.** Open the folder `roscon26-be` you cloned in your
-editor, VS Code for instance. In `turtle-sim/compose.yaml`, put your token in
-place of `frt_...`:
+We do this step by hand on purpose: the token is a password for your robot
+and shouldn't end up in a chat with your agent.
+
+**4. Start the turtle.** Open the `roscon26-be` folder you cloned in your
+editor, for example VS Code. Open `turtle-sim/compose.yaml` and replace
+`frt_...` with your token:
 
 ```yaml
       FLEETLESS_TOKEN: frt_...
 ```
 
-The token stays in that file on your machine: never in a chat, a commit or a
-screenshot. Then, in a terminal in `roscon26-be`:
+Keep the token in this file on your machine. Don't paste it into a chat,
+commit it or show it in a screenshot. Then open a terminal in `roscon26-be`
+and start the turtle:
 
 ```sh
 cd turtle-sim
@@ -90,26 +105,29 @@ cd turtle-sim
 docker compose up
 ```
 
-**5. Watch it come online.** The view is at <http://localhost:8765>: the
-garden from above, the turtle on its charging pad. Within seconds the console
-says `turtle is online`. Its **Data** and **Controls** are empty: the robot
-exposes nothing until its configuration says what.
+**5. Check that it's online.** Open <http://localhost:8765> to see the
+garden from above, with the turtle on its charging pad. After a few seconds
+the console shows `turtle is online`. The **Data** and **Controls** tabs are
+still empty. That's expected: Fleetless shows nothing from a robot until you
+configure what it should expose.
 
-Inside the container it is plain ROS 2. In a second terminal:
+The container runs a normal ROS 2 system. If you're curious, run this in a
+second terminal:
 
 ```sh
 docker exec -it turtle ros2 topic list
 ```
 
-**6. Ask the agent what is there.**
+**6. Ask the agent what the robot has.** Paste this prompt into your agent:
 
 ```text
 Use the Fleetless tools, and call docs with action describe before you first use an action. Find my robot named turtle and read what its bridge reported about its ROS graph (console_introspection_read, action get). List its topics, services and actions with their types in one table. Change nothing.
 ```
 
-**7. Let it write five entries.** The ROS graph knows topics and types. It
-does not know limits, units or picture sizes; those are in the prompt,
-because only someone who knows the robot can say them.
+**7. Let the agent write a first configuration.** The ROS graph tells the
+agent which topics exist and what types they have. It can't know speed
+limits, units or image sizes, so the prompt gives them. That's the part only
+someone who knows the robot can fill in.
 
 ```text
 Write a draft fleetless.yaml for the robot turtle with exactly these five entries, built from the ROS graph you just read. Call docs with action describe for console_config_write before you use it.
@@ -123,43 +141,50 @@ Write a draft fleetless.yaml for the robot turtle with exactly these five entrie
 Give every entry a description a model can act on. Save it with console_config_write, action draft_put, and do not publish. Then show me the YAML and the findings the draft returned.
 ```
 
-**8. Look, then publish.** In the console, open the turtle's
-**Configuration**: the agent's draft. Check what the graph could not tell it:
-the two speed limits, the percent, the 500 ms. Then **Publish**, and
-**Publish** again in the dialog. The dialog lists one `unknown_type` warning
-per entry: the cloud has not fetched this robot's message types yet. A
-warning, not a refusal. **Data** and **Controls** fill within seconds.
+**8. Review and publish.** In the console, open the turtle's
+**Configuration** tab. You'll find the agent's draft there. Check the values
+the agent couldn't have known: the two speed limits, the percentage and the
+500 ms. If they look right, click **Publish** and confirm with **Publish** in
+the dialog. The dialog shows an `unknown_type` warning for each entry,
+because Fleetless hasn't loaded the turtle's message types yet. It's only a
+warning and you can publish anyway. A few seconds later **Data** and
+**Controls** fill up.
 
 ### ✔️ Checkpoint 1
 
-Everyone switches to the turtle's complete configuration, 500 lines, most of
-them descriptions: they are all a model knows about the turtle, and block 2
-builds on them. Open <http://localhost:8765/fleetless.yaml>; the browser saves
-`turtle.fleetless.yaml`. On **Configuration**: **Upload fleetless.yaml**, the
-arrow pointing up, pick the file, **Save draft**, **Publish**, **Publish**.
+Now everyone loads the turtle's complete configuration. It's about 500 lines,
+and most of it is descriptions, because that's everything an AI model will
+know about the turtle. Block 2 builds on it.
 
-Then play on **Controls**:
+Open <http://localhost:8765/fleetless.yaml>. Your browser saves it as
+`turtle.fleetless.yaml`. In the console, on **Configuration**, click
+**Upload fleetless.yaml** (the arrow pointing up), pick the file, then
+**Save draft**, **Publish** and **Publish**.
 
-- **Send** on `drive` with `linear_speed` `0.5`: half a second, a quarter of
-  a metre, then the turtle stops by itself.
-- **Run** on `drive_to_square` with `H9`: a job. It ends `succeeded`, reason
-  `reached`.
-- `M5`: `target_occupied`, the square is all pond. `N13`: `unreachable`, a
-  courtyard without a door.
-- **Run** on `dock`, then switch off Wi-Fi. The view at
-  <http://localhost:8765> runs on your laptop: the turtle drives on to its
-  pad. Switch Wi-Fi back on, and the job's result, `docked`, arrives in the
-  console.
+Then try things out on **Controls**:
 
-## 2️⃣ Block 2: an app, a control page, an agent at the wheel
+- **Send** on `drive` with `linear_speed` set to `0.5`. The turtle moves for
+  half a second, about a quarter of a metre, and stops by itself.
+- **Run** on `drive_to_square` with `H9`. This starts a job, which ends with
+  `succeeded` and the reason `reached`.
+- Try `M5` and `N13` as well. `M5` is in the pond, so you get
+  `target_occupied`. `N13` is a courtyard without a door, so you get
+  `unreachable`.
+- **Run** on `dock`, then switch off your Wi-Fi. The view at
+  <http://localhost:8765> runs on your laptop, so you can watch the turtle
+  keep driving to its pad. Switch the Wi-Fi back on, and the result,
+  `docked`, shows up in the console.
 
-From here on, a coding agent in a terminal: Claude Code on the projector,
-Codex or another just as well.
+## 2️⃣ Block 2: Build your own app
 
-**1. Clone the app-starter.** It is a public template app on
-`@fleetless/sdk`, not made for this workshop: the same repository starts any
-app of yours, and GitHub's **Use this template** gives you a copy of your own.
-Today it goes into `turtle-app`. In a terminal in `roscon26-be`:
+For this block you use a coding agent in a terminal. We'll use Claude Code on
+the projector, but Codex or any other agent works too.
+
+**1. Clone the app template.** The app-starter is a public template for
+building apps on `@fleetless/sdk`. It isn't specific to this workshop, so you
+can use it for your own projects later, for example with GitHub's
+**Use this template** button. Today we clone it into a folder called
+`turtle-app`. In a terminal in `roscon26-be`:
 
 ```sh
 git clone https://github.com/fleetless/app-starter.git turtle-app
@@ -169,36 +194,36 @@ git clone https://github.com/fleetless/app-starter.git turtle-app
 cd turtle-app
 ```
 
-**2. Start your agent in `turtle-app`.** It reads the template, its README
-and its `AGENT-SETUP.md` from there.
+**2. Start your agent in the `turtle-app` folder.** That way it has the whole
+template as context, including the README and `AGENT-SETUP.md`.
 
-**3. Let the agent register the app.** Put your own address in place of
-`you@example.com`; the invitation goes to it.
+**3. Let the agent register the app with Fleetless.** Replace
+`you@example.com` with your own email address before you send the prompt.
+That's where the invitation for your app account goes.
 
 ```text
 Read AGENT-SETUP.md and carry out the prompt under "The prompt" with the Fleetless MCP tools. Its step 1 is answered: (a) Turtle Control, (b) turtle_control, (c) http://localhost:3000, (d) the robot turtle, (e) you@example.com, (f) hand me the link, (g) no. If set_mcp is refused plan_required, skip it, since the app's MCP server needs Plus and today does not need it, and carry on with the next step. When it is done, copy .env.example to .env and set NUXT_PUBLIC_API_URL=https://api.fleetless.dev and NUXT_PUBLIC_APP_IDENTIFIER=turtle_control there, changing nothing else.
 ```
 
-It reports an invitation link. Keep it.
+When the agent is done, it gives you an invitation link. Keep it for step 4.
 
-**4. Start the app**, in a second terminal in `turtle-app`:
+**4. Start the app.** Open a second terminal in `turtle-app` and run:
 
 ```sh
 docker compose up -d
 ```
 
-The first start installs about 1,100 packages into a Docker volume; later
-starts skip that. Follow it until the log prints `Local:`, then Ctrl-C, which
-leaves the app running:
+The first start downloads about 1,100 packages, which takes a few minutes.
+Later starts are quick. To see when it's ready, follow the log until it
+shows `Local:`, then press Ctrl-C. The app keeps running in the background.
 
 ```sh
 docker compose logs -f app
 ```
 
-Open the invitation link from step 3: a Fleetless page, where you set a
-password. Then sign in at <http://localhost:3000>. The turtle is listed;
-click it. Every tab on its page is drawn from its datasheet, the list of what
-your role reaches.
+Now open the invitation link from step 3 and set a password. Then sign in at
+<http://localhost:3000>. You'll see the turtle in the list. Click on it: the
+tabs on its page are generated from what your role is allowed to see and do.
 
 **5. Let the agent build a control page.**
 
@@ -206,48 +231,52 @@ your role reaches.
 Build a page in this app that controls my Fleetless robot turtle, and read robots.describe for it over MCP first to see what it offers. The app already runs in Docker (docker compose up -d) at http://localhost:3000 and reloads on every edit, so do not start it; this machine has no Node, so run pnpm only as docker compose exec app pnpm.
 ```
 
-The page reloads as the agent writes. Drive the turtle from it.
+The page in your browser updates while the agent works. Once it's done, try
+driving the turtle from your new page.
 
-**6. Hand the turtle to the agent.**
+**6. Let the agent drive.**
 
 ```text
 Take the turtle as close to a pond as it gets, then back onto its charging pad. Call robots.describe for the robot turtle first and read the descriptions. After each step, tell me where the turtle is.
 ```
 
-It reads the descriptions, gets `target_occupied` for a square of water,
-picks a neighbour, and ends with `dock`. Nobody in this room wrote a server,
-a database or a sign-in. That was the point.
+The agent reads the descriptions in the configuration and plans its own
+route. When it picks a square in the water it gets `target_occupied` and
+tries a square next to it. At the end it sends the turtle back with `dock`.
+
+Over the whole workshop nobody wrote a server, a database or a login. All of
+that came from Fleetless.
 
 ## 🧹 Afterwards
 
-In `turtle-app`, and then in `turtle-sim`:
+To stop everything, run this in `turtle-app` and then again in `turtle-sim`:
 
 ```sh
 docker compose down -v
 ```
 
-The robot, the app and your app user stay in your Fleetless account until you
-delete them in the console.
+Your robot, your app and your app user stay in your Fleetless account until
+you delete them in the console.
 
-## 🔧 When something does not work
+## 🔧 Troubleshooting
 
-| You see | Because | Then |
+| Problem | Cause | What to do |
 |---|---|---|
-| The turtle never turns online; the log says `invalid_token` | The token is wrong or missing | `turtle-sim/compose.yaml`: `FLEETLESS_TOKEN:`, a space, the token, no quotes; Ctrl-C and `docker compose up` again |
-| `unknown_type` warnings on publish | The cloud has not fetched the turtle's message types | Nothing; or the first prompt below |
-| Every call of the app fails as a network error | The app's origin is not in its `allowed_origins` | The second prompt below |
-| The app says "That does not exist, or you cannot reach it." | `NUXT_PUBLIC_APP_IDENTIFIER` is not the app's identifier | Fix `.env`, then `docker compose up -d` again |
-| Port 3000 is taken | Something else runs there | `PORT=3100` in `.env`, and the second prompt below with `http://localhost:3100` |
-| An edit does not reach the browser (Windows) | Docker Desktop passes no file events from a Windows drive | `CHOKIDAR_USEPOLLING=true` in `.env`, then `docker compose up -d` again |
-| Your console sign-in does not sign you in to the app | App users and Fleetless users are separate accounts | Sign in with the password you set on the invitation |
+| The turtle doesn't come online and the log shows `invalid_token` | The token is wrong or missing | Check `FLEETLESS_TOKEN:` in `turtle-sim/compose.yaml`: a space after the colon, then the token, no quotes. Press Ctrl-C and run `docker compose up` again |
+| `unknown_type` warnings when publishing | Fleetless hasn't loaded the turtle's message types yet | You can ignore them, or use the first prompt below |
+| Every request from the app fails with a network error | The app's address is missing from its `allowed_origins` | Use the second prompt below |
+| The app says "That does not exist, or you cannot reach it." | `NUXT_PUBLIC_APP_IDENTIFIER` in `.env` doesn't match the app | Fix `.env`, then run `docker compose up -d` again |
+| Port 3000 is already in use | Another program uses it | Add `PORT=3100` to `.env` and use the second prompt below with `http://localhost:3100` |
+| Changes don't show up in the browser (Windows) | Docker Desktop doesn't pass file changes from a Windows drive | Add `CHOKIDAR_USEPOLLING=true` to `.env`, then run `docker compose up -d` again |
+| Your console login doesn't work in the app | App accounts and Fleetless accounts are separate | Sign in with the password you set when you accepted the invitation |
 
-Fetch the message types:
+Load the message types:
 
 ```text
 Fetch the message types of the robot turtle with console_introspection_write, action fetch_types, then publish its configuration again.
 ```
 
-Allow the app's origin:
+Allow the app's address:
 
 ```text
 Add http://localhost:3000 to the allowed_origins of the app turtle_control, keeping everything else in its registration slice as it is.
@@ -255,7 +284,7 @@ Add http://localhost:3000 to the allowed_origins of the app turtle_control, keep
 
 ## 📄 License
 
-MIT, see [`LICENSE`](LICENSE). The turtle is
-[turtle-sim](https://github.com/fleetless/turtle-sim), the app is the
-[app-starter](https://github.com/fleetless/app-starter), and the rest is
+MIT, see [`LICENSE`](LICENSE). The turtle comes from
+[turtle-sim](https://github.com/fleetless/turtle-sim) and the app from the
+[app-starter](https://github.com/fleetless/app-starter). Everything else is
 in the [Fleetless docs](https://docs.fleetless.dev).
