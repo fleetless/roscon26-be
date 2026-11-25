@@ -1,3 +1,6 @@
+# Workshop slides available here
+https://claude.ai/artifact/Ua8MvhtuAjXPCB2ZAK2Yx8#slide-563b465ac932
+
 # 🐢 From a ROS 2 robot to an app
 
 This is the handout for the workshop on 25 November 2026. Over two blocks of
